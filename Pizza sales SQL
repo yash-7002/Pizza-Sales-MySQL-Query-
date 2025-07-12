@@ -1,0 +1,83 @@
+##ALL PIZZA
+select*from pizza_sales;
+
+
+##TOTAL REVENUE
+select sum(total_price) as "Total Revenue" from pizza_sales;
+
+
+##AVG ORDER VALUE
+select sum(total_price) / count(Distinct order_id) as Avg_Order_Value from pizza_sales;
+
+
+##TOTAL PIZZA SOLD
+select sum(quantity) as Total_Pizza_sold from pizza_sales;
+
+
+##TOTAL ORDER
+select count(Distinct order_id) as Total_Orders from pizza_sales;
+
+
+##AVG PIZZA PER ORDER
+select sum(quantity) / count(Distinct order_id) as Avg_Pizza_per_Order from pizza_sales;
+
+
+##DATA TYPE OF COLUMNS
+describe pizza_sales ;
+
+
+##MODIFY ORDER TIME
+alter table pizza_sales
+modify column order_time datetime;
+
+
+###Daily trend
+select dayname( order_date) as order_day, count(distinct order_id) as Total_orders
+from pizza_sales
+group by dayname(order_date);
+
+
+###Hourly trend
+select HOUR(order_time) as order_hour, count(distinct order_id) as Total_orders
+from pizza_sales
+Group by HOUR(order_time) ;
+
+
+###Percentage of sales by category
+select pizza_category, sum(total_price) as Total_sales,sum(total_price)*100/ (select sum(total_price) from pizza_sales where month(order_date)=1) as pct_sales_by_category
+from pizza_sales
+where month(order_date)=1
+group by pizza_category;
+
+
+###Percentage of sales by pizza size
+select pizza_size,cast(sum(total_price) as decimal(10,2)) as Total_sales, cast(sum(total_price)*100/ (select sum(total_price) from pizza_sales where quarter(order_date)=1) as Decimal(10,2)) as pct_sales_by_size
+from pizza_sales
+where quarter(order_date)=1
+group by pizza_size;
+
+
+###total pizza sold by pizza category
+select pizza_category, sum(quantity) as total_pizza
+from pizza_sales
+group by pizza_category;
+
+
+###top 5 best seller by total pizza sold
+select pizza_name as Top_5_Pizza, sum(quantity) as Total_pizza
+from pizza_sales
+group by pizza_name
+order by Total_pizza desc
+limit 5;
+
+
+###Bottom 5 best seller by total pizza sold
+select pizza_name as Top_5_Pizza, sum(quantity) as Total_pizza
+from pizza_sales
+group by pizza_name
+order by Total_pizza
+limit 5;
+
+
+
+
